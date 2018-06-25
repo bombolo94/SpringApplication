@@ -29,7 +29,8 @@ public class Configs {
 	
 		try {
 	
-			input = new FileInputStream("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication\\config.properties");
+			//input = new FileInputStream("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication\\config.properties");
+			input = new FileInputStream("config.properties");
 	
 			// load a properties file
 			props.load(input);

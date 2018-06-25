@@ -79,7 +79,9 @@ public class Schema {
 
 	private void loadFile(File file) {
 		StringBuilder b = new StringBuilder();
-		try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication"+file))) {
+		try {
+			//BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication"+file));
+			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = br.readLine()) != null) {
 				b.append(line + "\n");

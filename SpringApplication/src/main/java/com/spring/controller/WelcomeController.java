@@ -12,7 +12,7 @@ public class WelcomeController
   public WelcomeController() {}
   
   @org.springframework.web.bind.annotation.RequestMapping({"/"})
-  public String index() { return "welcome"; }
+  public String index() { System.out.println(System.getProperty("user.dir")); return "welcome"; }
     
   @Bean
   public org.springframework.web.servlet.ViewResolver getViewResolver() {

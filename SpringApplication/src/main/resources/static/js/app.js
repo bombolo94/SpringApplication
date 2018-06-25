@@ -172,10 +172,13 @@ function zio(outContent){
 }
 
 function create_zip() {
-	var fileToLoad = document.getElementById("inputTextToSave").value
-	var name = document.getElementById("inputFileNameToSaveAs").value
+	var fileToLoadS = document.getElementById("inputTextToSaveS").value
+	var nameS = document.getElementById("inputFileNameToSaveAsS").value
+	var fileToLoadM = document.getElementById("inputTextToSaveM").value
+	var nameM = document.getElementById("inputFileNameToSaveAsM").value
 	var zip = new JSZip();
-	zip.file(name, fileToLoad);
+	zip.file(nameS, fileToLoadS);
+	zip.file(nameM, fileToLoadM);
 	
 	zip.generateAsync({type:"blob"}).then(function (blob) {
         saveAs(blob, "FileGenerated.zip");

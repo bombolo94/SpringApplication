@@ -29,7 +29,7 @@ public class Configs {
 	
 		try {
 	
-			input = new FileInputStream("config.properties");
+			input = new FileInputStream("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication\\config.properties");
 	
 			// load a properties file
 			props.load(input);

@@ -4,6 +4,8 @@
 <html>
 <head>
 <script src="js/app.js"></script>
+<script src="js/jszip.js"></script>
+<script src="js/FileSaver.js"></script>
 <link href="css/style.css" rel="stylesheet">
 <title>Generator</title>
 </head>
@@ -48,7 +50,6 @@
 					<td>Filename to Save As:<input id="inputFileNameToSaveAs" value="<%=fileNameOutS %>" style="width:352px"></td>
 					<td><button onclick="return saveFile()" >Save File</button></td>
 				</tr>
-				<%System.out.println(fileContentS); %>
 			<%}else if( (fileContentM!=null && fileNameOutM!=null) && (fileContentS==null && fileNameOutS==null)){%>
 				<tr>
 					<td><textarea id="inputTextToSave" style="width:512px;height:256px"><%=fileContentM %></textarea></td>
@@ -68,7 +69,7 @@
 					<td>Filename to Save As:<input id="inputFileNameToSaveAsM" value="<%=fileNameOutM %>" style="width:352px"></td>
 				</tr>	
 				<tr>
-					<td><button>Save File As Zip</button></td>
+					<td><button onclick="create_zip()">Save File As Zip</button></td>
 				</tr>
 			<% }%>	
 		

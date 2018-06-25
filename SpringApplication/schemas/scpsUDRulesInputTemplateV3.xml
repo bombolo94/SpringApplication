@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+        	Urban Dataset Rules Template
+        	Author: A. Brutti
+        	Last update: 2018-05-23
+-->
+
+<schema queryBinding="xslt2" xmlns="http://purl.oclc.org/dsdl/schematron">
+  <ns uri="smartcityplatform:enea:information:xml:schemas:main:urbandataset" prefix="scps"/>
+
+  <!-- Parametri specifici dell'Urban Dataset  
+       (al cambiare dell'Urban Dataset cambiano i valori dell'attributo id dell'elemento pattern e dell'attributo value degli elementi param; tutto i resto è fisso)
+  -->
+
+  <!-- sostituire la stringa $$udName con il nome dell'UD -->
+  <pattern is-a="abstractUD" id="$$udID">
+    <!--  sostituire la stringa $$udName con il nome dell'UD -->
+    <param name="UDname" value="'$$udName'"/>
+    <!-- sostituire la stringa $$udURI  con l'URI dell'UD -->
+    <param name="UDuri" value="'$$udURI'"/>
+
+    <!-- MODIFICATO: sostituire la stringa $$udPropN con il numero di proprietà, anche ripetute (ad es. la proprietà C che è sottoproprietà di A e B deve essere conteggiata due
+       volte), che compongono l'UD (sono INCLUSE nel conteggio eventuali sottoproprietà; se eventulmente presenti, sono ESCLUSE dal conteggio period, coordinates 
+      e le loro sottoproprietà) -->
+    <param name="propertyNum" value="$$udPropN"/>
+
+    <!-- NUOVO PARAMETRO: sostituire la stringa $$udPropDefN con il numero di proprietà distinte che compongono l'UD (sono INCLUSE nel conteggio eventuali sottoproprietà e 
+     e period, coordinates e le loro sottoproprietà, se presenti. Eventuali sottoproprietà ripetute devono essere conteggiate una sola volta) -->
+    <param name="propertyDefNum" value="$$udPropDefN"/>
+
+    <!-- MODIFICATO: sostituire la stringa $$udPropNameList con la lista dei nomi delle proprietà che compongono l'UD, separati da spazio. Eventuali proprietà ripetute vanno inserite
+     una sola volta. Se la proprietà è COORDINATES, aggiungo di default alla lista le proprietà format, longitude, latitude, height.
+     Se la proprietà è PERIOD, aggiungo di default alla lista le proprietà start_ts, end_ts.-->
+    <param name="propNameList" value="'$$udPropNameList'"/>
+
+    <!-- NUOVO PARAMETRO: sostituire la stringa $$udFirstPropNameList con la lista dei nomi delle proprietà di primo livello che compongono l'UD, separati da spazio.
+    Sono escluse dalla lista coordinates e period -->
+    <param name="firstLevelPropNameList" value="'$$udFirstPropNameList'"/>
+
+    <!-- IMPORTANTE!!!
+         LE 4 LISTE SEGUENTI DEVONO ESSERE PENSATE COME 4 VETTORI PARALLELI E, QUINDI, DEVONO RISULTARE ORDINATE IN MODO COERENTE (VEDI FILE DI REGOLE DI ESEMPIO)
+         
+                  
+         ATTENZIONE: IL CRITERIO DI CREAZIONE DELLE LISTE E' STATO MODIFICATO. Non so se era già gestito, ma nella lista delle proprietà devono andare a finire 
+         anche le sottoproprietà di eventuali proprietà composte. 
+         
+         Se la proprietà è COORDINATES, aggiungo di default alla lista le proprietà format, longitude, latitude, height.
+         Se la proprietà è PERIOD, aggiungo di default alla lista le proprietà start_ts, end_ts.
+         Per le altre proprietà composte devo cercare nell'ontologia quali sono le sottoproprietà che le compongono.
+         
+         In caso di proprietà composta, assegno all'elemento corrispondente del vettore dataTypeSet il valore 'complex' e all'elemento corrispondente del vettore
+         umSet il valore 'adimensionale'
+         
+    -->
+    <!-- sostituire la stringa $$udPropNameSet con la lista dei nomi delle proprietà e sottoproprietà che compongono l'UD, separati da virgola spazio. Eventuali 
+      sottoproprietà ripetute devono comparire una sola volta -->
+    <param name="propNameSet" value="tokenize('$$udPropNameSet', '[,\s]+')"/>
+    
+    <!-- MODIFICATO: sostituire la stringa $$udDataTypeSet con la lista dei tipi di dato relativi alle proprietà dell'UD, separati da virgola spazio. Se la proprietà è composta 
+    da sottoproprietà, assegnare al dataTypeSet il valore 'complex-numeroSottoprieta', dove numeroSottoproprieta è un intero pari al numero delle sottoproprietà della
+    proprietà complessa -->
+    <param name="dataTypeSet" value="tokenize('$$udDataTypeSet', '[,\s]+')"/>
+    
+    <!-- sostituire la stringa $$udUmSet con la lista delle unità di misura relative alle proprietà dell'UD, separati da virgola spazio. Se la proprietà è composta 
+    da sottoproprietà, assegnare a udUmSet il valore 'adimensionale' -->
+    <param name="umSet" value="tokenize('$$udUmSet', '[,\s]+')"/>
+    
+    <!-- NUOVO: sostituire la stringa $$codeList con la lista degli eventuali riferimenti a codelist associati alle proprietà dell'UD, separati da virgola spazio.
+     Se alla proprietà non è associata una codelist, assegnare in valore 'null' -->
+    <param name="codeListSet" value="tokenize('$$codeList', '[,\s]+')"/>
+
+
+    <!-- NUOVO: sostituire la stringa $$udSubPropNameSet con una lista che avrà tanti valori quante sono le coppie "proprietà composta - sua sottoproprietà".
+       Ogni valore è la concatenazione di  "nome della proprietà composta" e "nome della sua sottoproprietà (tutto attaccato, senza caratteri separatori) -->
+    <param name="subPropNameSet" value="tokenize('$$udSubPropNameSet', '[,\s]+')"/>
+
+
+    <!-- l'attributo id del seguente elemento è sempre scps:UrbanDataset -->
+    <param name="root" value="scps:UrbanDataset"/>
+  </pattern>
+
+  <!-- Regole da applicare a tutti gli Urban Dataset  -->
+  <pattern id="abstractUD" abstract="true">
+    <!-- variabili globali -->
+    <let name="firstID" value="//scps:line[1]/@id"/>
+
+    <rule context="//scps:specification">
+      <assert test="not(@version) or (@version = '1.0')" flag="fatal" id="UD-001">[UD-001]- La
+        versione delle specifiche ha un valore errato; il valore dovrebbe essere '1.0'.</assert>
+      <assert test="(normalize-space(scps:name) = normalize-space($UDname))" flag="fatal"
+        id="UD-002">[UD-002] - Il nome dell'Urban Dataset non è coerente con la sua specifica; il
+        valore dovrebbe essere <value-of select="$UDname"/>
+      </assert>
+      <assert test="(normalize-space(scps:uri) = normalize-space($UDuri))" flag="fatal" id="UD-003"
+        >[UD-003] - Il riferimento alla specifica dell'Urban Dataset non è corretto.</assert>
+    </rule>
+
+    <rule context="//scps:properties">
+      <assert
+        test="(count(scps:propertyDefinition) = count(distinct-values(scps:propertyDefinition/scps:propertyName)))"
+        flag="fatal" id="UD-004">[UD-004]- Dichiaraziane di proprietà ripetuta; ogni proprietà può
+        essere dichiarata una sola volta.</assert>
+      <assert test="(count(scps:propertyDefinition) = count($propNameSet))" flag="fatal" id="UD-013"
+        >[UD-013]- Il numero di proprietà dichiarate non è coerente con la specifica.</assert>
+    </rule>
+
+    <rule context="//scps:propertyDefinition">
+      <let name="pos" value="index-of(($propNameSet), normalize-space(scps:propertyName))"/>
+      <let name="subPrNum" value="$dataTypeSet[$pos]"/>
+      <assert
+        test="not(contains(normalize-space($subPrNum), 'complex-')) or (number(substring-after(normalize-space($subPrNum), 'complex-')) = count(child::scps:subProperties/scps:propertyName))"
+        id="UD-022">[UD-022]- L'elenco delle sottoproprietà non è coerente con la
+        specifica.</assert>
+
+      <assert test="(contains(($propNameList), normalize-space(scps:propertyName)))" flag="fatal"
+        id="UD-005">[UD-005]- La proprieta' dichiarata non appartiene all'Urban Dataset.</assert>
+      <assert
+        test="empty($pos) or ((scps:dataType) and (normalize-space(scps:dataType) = normalize-space($dataTypeSet[$pos]))) or ((contains(normalize-space($subPrNum), 'complex-')) and (count(//scps:subProperties/scps:propertyName) &gt; 0))"
+        flag="fatal" id="UD-006">[UD-006]- La dichiarazione della proprietà non è coerente con la
+        sua specifica (dataType errato o sottoproprietà assenti).</assert>
+      <assert
+        test="empty($pos) or (contains(normalize-space($subPrNum), 'complex-')) or (normalize-space(scps:unitOfMeasure) = normalize-space($umSet[$pos]))"
+        flag="fatal" id="UD-007">[UD-007]- L'unita' di misura dichiarata per la proprieta' non e'
+        coerente con la sua specifica.</assert>
+      <assert
+        test="empty($pos) or (normalize-space($codeListSet[$pos]) = 'null') or (normalize-space(scps:codeList) = normalize-space($codeListSet[$pos]))"
+        flag="fatal" id="UD-021">[UD-021]- La proprietà dovrebbe essere associata ad una lista di
+        codici: la dichirazione della lista di codici e' assente o non coerente con la
+        specifica.</assert>
+    </rule>
+
+    <rule context="//scps:subProperties/scps:propertyName">
+      <let name="pr"
+        value="concat(ancestor::scps:subProperties/preceding-sibling::scps:propertyName, .)"/>
+      <assert
+        test="not(empty(index-of($subPropNameSet, $pr))) or (empty(index-of($propNameSet, ancestor::scps:subProperties/preceding-sibling::scps:propertyName)))"
+        flag="fatal" id="UD-011">[UD-011]- Dichiarazione di sottoproprietà non coerente con la
+        specifica.</assert>
+    </rule>
+
+    <rule context="//scps:line">
+      <assert test="(count(preceding-sibling::scps:line) + $firstID) = number(./@id)" flag="warning"
+        id="UD-020">[UD-020]- Attenzione: l'indentificatore della linea non segue una corretta
+        numerazione progressiva.</assert>
+      <assert test="count(descendant::scps:property) = $propertyNum" flag="fatal" id="UD-008"
+        >[UD-008]- Il numero di proprieta' fornite nella linea non è coerente con la specifica
+        dell'Urban Dataset.</assert>
+      <assert test="count(scps:property/@name) = count(distinct-values(scps:property/@name))"
+        flag="fatal" id="UD-015">[UD-015]- Proprietà ripetuta.</assert>
+      <assert test="not(contains($propNameList, 'coordinates')) or (scps:coordinates)" flag="fatal"
+        id="UD-017">[UD-017]- Blocco 'coordinates' assente: il blocco deve essere presente in ogni
+        linea.</assert>
+      <assert test="not(contains($propNameList, 'period')) or (scps:period)" flag="fatal"
+        id="UD-018">[UD-018]- Blocco 'period' assente: il blocco deve essere presente in ogni
+        linea.</assert>
+    </rule>
+
+    <rule context="//scps:property">
+      <let name="pos" value="index-of(($propNameSet), normalize-space(@name))"/>
+      <let name="subPrNum" value="$dataTypeSet[$pos]"/>
+      <assert test="(contains($propNameList, normalize-space(@name)))" flag="fatal" id="UD-009"
+        >[UD-009]- La proprieta' fornita non appartiene all'Urban Dataset.</assert>
+
+      <assert
+        test="(.[ancestor::scps:property]) or (contains($firstLevelPropNameList, normalize-space(@name)))"
+        flag="fatal" id="UD-019">[UD-019]- La proprieta' non è stata fornita in modo coerente con la
+        specifica.</assert>
+      <assert
+        test="empty($pos) or (not(contains(normalize-space($subPrNum), 'complex-')) and (scps:val)) or (not(contains(normalize-space($subPrNum), 'complex-')) and (count(child::scps:property) > 0))"
+        flag="fatal" id="UD-012">[UD-012]- Il valore della proprieta' non è fornito in modo
+        corretto.</assert>
+
+      <assert
+        test="not(.[ancestor::scps:property]) or not(empty(index-of($subPropNameSet, normalize-space(concat(ancestor::scps:property/@name, normalize-space(@name))))))"
+        flag="fatal" id="UD-014">[UD-014]- Il valore della proprieta' non è fornito in modo
+        corretto.</assert>
+
+      <assert test="count(scps:property/@name) = count(distinct-values(scps:property/@name))"
+        flag="fatal" id="UD-016">[UD-016]- Sottoproprietà ripetuta.</assert>
+    </rule>
+
+  </pattern>
+</schema>

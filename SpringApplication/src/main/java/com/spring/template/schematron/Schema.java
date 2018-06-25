@@ -2,12 +2,9 @@ package com.spring.template.schematron;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +30,6 @@ public class Schema {
 	private String originalContent;
 	private String modifiedContent;
 	private String fileName;
-
-	//private ArrayList<File> fileSchematron = null;
 
 	/**
 	 * Getter of the original schematron text template
@@ -62,8 +57,6 @@ public class Schema {
 	 */
 	public Schema(String fileName) {
 		this(new File(fileName));
-		//this.fileSchematron = new ArrayList<File>();
-
 	}
 
 	/**
@@ -80,8 +73,8 @@ public class Schema {
 	private void loadFile(File file) {
 		StringBuilder b = new StringBuilder();
 		try {
-			//BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication"+file));
-			BufferedReader br = new BufferedReader(new FileReader(file));
+			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication"+file));
+			//BufferedReader br = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = br.readLine()) != null) {
 				b.append(line + "\n");
@@ -233,15 +226,8 @@ public class Schema {
 		return file;
 	}
 
-//	public ArrayList<File> getFileSchematron() {
-//		return fileSchematron;
-//	}
-//
-//	public void setFileSchematron(ArrayList<File> fileSchematron) {
-//		this.fileSchematron = fileSchematron;
-//	}
 
-	public String saveFileAndrea() {
+	public String saveContentFile() {
 		return this.modifiedContent;
 
 	}

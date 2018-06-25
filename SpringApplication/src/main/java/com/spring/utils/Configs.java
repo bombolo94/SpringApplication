@@ -29,14 +29,11 @@ public class Configs {
 	
 		try {
 	
-			//input = new FileInputStream("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication\\config.properties");
-			input = new FileInputStream("config.properties");
+			input = new FileInputStream("C:\\Users\\bomb-\\git\\SpringApplication\\SpringApplication\\config.properties");
+			//input = new FileInputStream("config.properties");
 	
 			// load a properties file
 			props.load(input);
-	
-			// get the property value and print it out
-//			System.out.println(props.getProperty("address"));
 	
 		} catch (IOException ex) {
 			ex.printStackTrace();

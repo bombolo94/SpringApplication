@@ -4,12 +4,22 @@ body {
 }
 
 .vertical-menu {
-    width: 200px;
-    height: 150px;
-    overflow-y: auto;
-    position:absolute;
-	left:50%;
-	margin-left:-375px
+   width:200px;
+	height:200px;
+	position:absolute;
+	top:20%;
+	left:30%; 
+	margin:-100px 0 0 -100px;
+	text-align: center;
+}
+
+.central{
+	width:200px;
+	height:200px;
+	position:absolute;
+	top:20%;
+	left:50%; 
+	margin:-100px 0 0 -100px;
 }
 
 .vertical-menu a {

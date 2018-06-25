@@ -168,7 +168,7 @@ public class SchematronBuilder implements IBuilderTemplate {
 		
 		Schema s = new Schema(filename);
 		s.replace(replacements);
-		String fileC = s.saveFileAndrea();
+		String fileC = s.saveContentFile();
 		return fileC;
 
 	}

@@ -78,7 +78,7 @@
 		<tr>
 			<td>
 				Scegli file dei dadates<input type="file" id="fileDataset">
-					<button onclick="return loadFileAsText('<%=ext%>','fileDataset')"  >Load Selected File</button>
+					<button onclick="return loadFileAsText('fileDataset')"  >Load Selected File</button>
 			</td>
 			<td>
 				<form action="templateGeneratorF" method="POST">

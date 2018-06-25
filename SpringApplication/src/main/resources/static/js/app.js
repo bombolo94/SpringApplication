@@ -94,7 +94,7 @@ function destroyClickedElement(event) {
 
 function loadFileAsText(id) {
 	var fileToLoad = document.getElementById(id).files[0];
-	if (document.getElementById("fileToLoad").value.endsWith(".xml")) {
+	if (document.getElementById(id).value.endsWith(".xml")) {
 		var nFU = document.getElementById(id).value;
 		var p = nFU.substring(0, nFU.length - 4);
 		document.getElementById('inputFileName').value=p+".json";
@@ -105,7 +105,7 @@ function loadFileAsText(id) {
 		};
 		fileReader.readAsText(fileToLoad, "UTF-8");
 		return true;
-	} else if (document.getElementById("fileToLoad").value.endsWith(".json")) {
+	} else if (document.getElementById(id).value.endsWith(".json")) {
 		var nFU = document.getElementById(id).value;
 		var p = nFU.substring(0, nFU.length - 5);
 		document.getElementById('inputFileName').value=p+".xml";

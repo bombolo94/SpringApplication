@@ -1,5 +1,6 @@
 package com.spring.template.message;
 import java.io.File;
+import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -277,8 +278,90 @@ public class MessageBuilder implements IBuilderTemplate {
 
 	@Override
 	public String buildS() {
-		// TODO Auto-generated method stub
-		return null;
+		String stringFile= null;
+		
+		System.out.println("Retrieving data from ontology to compile message template");
+		Map<String, String> ids = this.templateIDPropertires();
+		System.out.println(ids);
+		List<com.spring.template.message.Property> t = this.templateProperties();
+		
+		String filename = ids.get("id") + "-Template.xml";
+		try {
+			System.out.println("Generating message file");
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			doc.setXmlStandalone(true);
+
+			String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Timestamp(System.currentTimeMillis()));
+			Comment comment = doc.createComment("\n" +
+					"	File: " + filename +"\r\n" +
+					"	Generato il: " + timeStamp +"\r\n" +
+					"\r\n" +
+					"	Descrizione: questo documento costituisce un XML Campione per l'Urban Dataset " + ids.get("id") + "\r\n" + 
+					"	(sono stati valorizzati solo gli elementi e attributi che hanno valore fisso per questo \r\n" + 
+					"	tipo di Urban Dataset, ad esempio gli elementi 'propertyName'; gli altri elementi e attributi, \r\n" + 
+					"	ad esempio i 'val', devono essere valorizzati).\r\n");
+			
+			doc.appendChild(comment);
+			
+			Element UD = doc.createElement("UrbanDataset");
+			
+			//// Urban Dataset attributes definition
+			Attr xmlnsxsi = doc.createAttribute("xmlns:xsi");
+			xmlnsxsi.setValue("http://www.w3.org/2001/XMLSchema-instance");
+			UD.setAttributeNode(xmlnsxsi);
+			Attr schemaLocation = doc.createAttribute("xsi:schemaLocation");
+			schemaLocation.setValue(this.xmlns + " " + Configs.getInstance().getProps().getProperty("scpsaddr"));
+			UD.setAttributeNode(schemaLocation);
+			Attr xmlnsEl = doc.createAttribute("xmlns");
+			xmlnsEl.setValue(this.xmlns);
+			UD.setAttributeNode(xmlnsEl);
+			
+			doc.appendChild(UD);
+			
+			//// Urban Dataset Specification section definition
+			Specification spec = new Specification(ids, t);
+			Element specNode = spec.text(doc);
+			
+			//// Urban Dataset Context definition
+			Context cont = new Context("id1", "UTC+1", "WGS84-DD", "IT");
+			Element contextNode = cont.text(doc);
+			
+			Values val = new Values(t);
+			Element valuesNode = val.text(doc);
+			
+			
+			UD.appendChild(specNode);
+			UD.appendChild(contextNode);
+			UD.appendChild(valuesNode);
+			
+			//// Urban Dataset Values example
+			//TODO
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
+			DOMSource source = new DOMSource(doc);
+			StringWriter strWriter = new StringWriter();
+	        StreamResult r = new StreamResult(strWriter);
+	    
+	        transformer.transform(source, r);
+	        stringFile = strWriter.getBuffer().toString();
+//			StreamResult result = new StreamResult(new File("output/" + filename));
+//			transformer.transform(source, result);
+			System.out.println("Message template file saved");
+
+			
+		} catch (ParserConfigurationException | TransformerException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return stringFile;
 	}
 
 }

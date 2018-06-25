@@ -11,6 +11,7 @@ import com.spring.values.Values;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,9 +43,10 @@ public class FileUploadController
   }
   
   @RequestMapping(value={"/uploadFile"}, method={RequestMethod.POST})
-  public ModelAndView uploadFileXML(@RequestParam("fileContent") String fileUploaded, @RequestParam("extension") String extension) {
+  public ModelAndView uploadFileXML(@RequestParam("fileContent") String fileUploaded, @RequestParam("extension") String extension, @RequestParam("inputFileName") String inputFileName) {
     ModelAndView modelAndView = new ModelAndView("confirmation");
     String stringFile = null;
+    String fileToSaveName = null;
     try
     {
     	if(extension.equals(".json")) {
@@ -80,7 +82,11 @@ public class FileUploadController
     	      builder.disableHtmlEscaping();
     	      Gson gson = builder.setPrettyPrinting().create();
     	      stringFile = gson.toJson(container);
-    	      modelAndView.addObject("stringFile", stringFile);
+    	      
+    	      
+    	      String pattern = Pattern.quote(System.getProperty("file.separator"));
+    	      String[] splittedFileName = inputFileName.split(pattern);
+    	      fileToSaveName = splittedFileName[2];
     	     
     	}else {
     		GsonBuilder builder = new GsonBuilder();
@@ -135,9 +141,15 @@ public class FileUploadController
 	    
 	        transformer.transform(source, r);
 	        stringFile = strWriter.getBuffer().toString();
+	        
+	        String pattern = Pattern.quote(System.getProperty("file.separator"));
+  	      String[] splittedFileName = inputFileName.split(pattern);
+  	      fileToSaveName = splittedFileName[2];
+  	      
     	}
-    	modelAndView.addObject("extension", extension);
+//    	modelAndView.addObject("extension", extension);
     	modelAndView.addObject("stringFile", stringFile);
+    	modelAndView.addObject("fileToSaveName", fileToSaveName);
     } catch (Exception e) {
       System.out.println(e);
     }

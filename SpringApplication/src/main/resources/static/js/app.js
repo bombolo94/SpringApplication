@@ -10,7 +10,15 @@ function valid() {
 
 }
 
-function radio() {
+function radioParsing() {
+	var parser = document.getElementsByName("input");
+	cont = 0;
+	for (var i = 0, length = parser.length; i < length; i++) {
+		if (parser[i].checked) {
+			cont++;
+		}
+	}
+	
 	var parser = document.getElementsByName("parser");
 	cont = 0;
 	for (var i = 0, length = parser.length; i < length; i++) {
@@ -23,8 +31,33 @@ function radio() {
 		alert("Radio must be checked");
 		return false;
 	} else {
+		 document.getElementById("formParser").submit();
 		return true;
 	}
+}
+
+function saveFile() {
+	var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value
+	if (fileNameToSaveAs == '') {
+		alert("Please Digit a name for the file");
+		return false;
+
+	} else {
+		var textToSave = document.getElementById("inputTextToSave").value;
+		var textToSaveAsBlob = new Blob([ textToSave]);
+		var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+		var downloadLink = document.createElement("a");
+		downloadLink.download = fileNameToSaveAs;
+		downloadLink.innerHTML = "Download File";
+		downloadLink.href = textToSaveAsURL;
+		downloadLink.onclick = destroyClickedElement;
+		downloadLink.style.display = "none";
+		document.body.appendChild(downloadLink);
+
+		downloadLink.click();
+		return true;
+	}
+
 }
 
 function saveTextAsFile(ext) {
@@ -40,6 +73,7 @@ function saveTextAsFile(ext) {
 			charset : "UTF-8"
 		} ]);
 		var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+		alert(textToSaveAsBlob);
 		var downloadLink = document.createElement("a");
 		downloadLink.download = fileNameToSaveAs;
 		downloadLink.innerHTML = "Download File";
@@ -58,34 +92,31 @@ function destroyClickedElement(event) {
 	document.body.removeChild(event.target);
 }
 
-function loadFileAsText(ext,id) {
+function loadFileAsText(id) {
 	var fileToLoad = document.getElementById(id).files[0];
-	if (ext == ".json") {
-		if (document.getElementById("fileToLoad").value.endsWith(".xml")) {
-			var fileReader = new FileReader();
-			fileReader.onload = function(fileLoadedEvent) {
-				var textFromFileLoaded = fileLoadedEvent.target.result;
-				document.getElementById("fileContent").value = textFromFileLoaded;
-			};
-			fileReader.readAsText(fileToLoad, "UTF-8");
-			return true;
-		} else {
-			alert('Please enter a valid name file.');
-			return false;
-		}
-	} else if(ext==".xml") {
-		if (document.getElementById("fileToLoad").value.endsWith(".json")) {
-			var fileReader = new FileReader();
-			fileReader.onload = function(fileLoadedEvent) {
-				var textFromFileLoaded = fileLoadedEvent.target.result;
-				document.getElementById("fileContent").value = textFromFileLoaded;
-			};
-			fileReader.readAsText(fileToLoad, "UTF-8");
-			return true;
-		} else {
-			alert('Please enter a valid name file.');						
-			return false;
-		}
+	if (document.getElementById("fileToLoad").value.endsWith(".xml")) {
+		var nFU = document.getElementById(id).value;
+		var p = nFU.substring(0, nFU.length - 4);
+		document.getElementById('inputFileName').value=p+".json";
+		var fileReader = new FileReader();
+		fileReader.onload = function(fileLoadedEvent) {
+			var textFromFileLoaded = fileLoadedEvent.target.result;
+			document.getElementById("fileContent").value = textFromFileLoaded;
+		};
+		fileReader.readAsText(fileToLoad, "UTF-8");
+		return true;
+	} else if (document.getElementById("fileToLoad").value.endsWith(".json")) {
+		var nFU = document.getElementById(id).value;
+		var p = nFU.substring(0, nFU.length - 5);
+		document.getElementById('inputFileName').value=p+".xml";
+		var fileReader = new FileReader();
+		fileReader.onload = function(fileLoadedEvent) {
+			var textFromFileLoaded = fileLoadedEvent.target.result;
+			document.getElementById("fileContent").value = textFromFileLoaded;
+		};
+		fileReader.readAsText(fileToLoad, "UTF-8");
+		return true;
+	
 
 	}else if(ext=".txt"){
 		var fileReader = new FileReader();
@@ -95,11 +126,14 @@ function loadFileAsText(ext,id) {
 		};
 		fileReader.readAsText(fileToLoad, "UTF-8");
 		return true;
+	} else {
+		alert('Please enter a valid name file.');						
+		return false;
 	}
 
 }
 
-function prova(){
+function inputForm(){
 	var parser = document.getElementsByName("input");
 	cont = 0;
 	for (var i = 0, length = parser.length; i < length; i++) {
@@ -109,7 +143,7 @@ function prova(){
 	}
 	
 	if(cont>0){
-		 document.getElementById("form1").submit();
+		 document.getElementById("formInput").submit();
 		return true;
 	}else{
 		

@@ -14,7 +14,7 @@
 	
 	<a href="./">Home</a>
 	<% String stringFile = (String) request.getAttribute("stringFile"); 
-		String ext = (String) request.getAttribute("extension");%>
+		String fileToSaveName = (String) request.getAttribute("fileToSaveName");%>
 	
 	
 	<table>
@@ -26,8 +26,8 @@
 	</tr>
 	<tr>
 		<td>Filename to Save As:</td>
-		<td><input id="inputFileNameToSaveAs"></input></td>
-		<td><button onclick="return saveTextAsFile('<%=ext%>')" >Save File</button></td>
+		<td><input id="inputFileNameToSaveAs" value="<%=fileToSaveName %>" style="width:352px"></input></td>
+		<td><button onclick="return saveFile()" >Save File</button></td>
 	</tr>
 	
 </table>

@@ -27,7 +27,7 @@
 	<table>
 		<tr>
 			<td>Select a File to Load: <input type="file" id="fileToLoad">
-				<button onclick="return loadFileAsText('<%=ext%>','fileToLoad')"  >Load Selected File</button>
+				<button onclick="return loadFileAsText('fileToLoad')"  >Load Selected File</button>
 
 			</td>
 		</tr>
@@ -35,14 +35,15 @@
 	<form method="POST" action="uploadFile" onsubmit="return valid()">
 		<textarea name=fileContent id="fileContent"
 			style="width: 512px; height: 256px"></textarea>
-		<input name="extension" value="<%=ext%>" hidden="true"> <input
-			type="submit" value="Upload">Up
+		<input name="extension" value="<%=ext%>" hidden="true">
+		<input name="inputFileName" id="inputFileName" hidden="true"></input>
+		<input type="submit" value="Upload">
 	</form>
 	<%
 		} else {
 	%>
 
-	<form method="POST" action="parsing">
+	<form id="formParser" method="POST" action="parsing" onclick=" return radioParsing()">
 		<table>
 			<tr>
 				<td>
@@ -50,7 +51,6 @@
 						<legend>Parser</legend>
 						XML-JSON <input type="radio" name="parser" value="xml2json" />
 						JSON-XML <input type="radio" name="parser" value="json2xml" /> 
-						<input type="submit" value="Upload" onclick="return radio()"> Press here to select the parser!
 					</fieldset>
 				</td>
 			</tr>

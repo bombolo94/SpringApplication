@@ -51,17 +51,23 @@ public class GeneratorController {
 		UrbanDataset ud = new UrbanDataset(datasetName);
 		for(String templ : template) {
 			if(templ.equals("templateMessage")) {
-				/*TODO*/
+
 				MessageBuilder mB = new MessageBuilder(ud);
-				mB.build();
+				String content = mB.buildS();
+				String fileNameOut =ud.getName()+".xml";
+				modelAndView.addObject("fileNameOutM", fileNameOut);
+				modelAndView.addObject("input","inpU");
+				modelAndView.addObject("fileContentM", content);
+				
+				
 			}else if(templ.equals("schematron")) {
+				
 				SchematronBuilder sB = new SchematronBuilder(ud);
 				String content = sB.buildS();
-				//System.out.println(content);
 				String fileNameOut =ud.getName()+".sch";
-				modelAndView.addObject("fileNameOut", fileNameOut);
+				modelAndView.addObject("fileNameOutS", fileNameOut);
 				modelAndView.addObject("input","inpU");
-				modelAndView.addObject("fileContent", content);
+				modelAndView.addObject("fileContentS", content);
 			}
 		}
 		
@@ -73,9 +79,13 @@ public class GeneratorController {
 	@ResponseBody
 	public void handleTemplateF(HttpServletResponse response,@RequestParam("template") String[] template, @RequestParam("fileContent") String fileUploaded) {
 		
+		
+		/*TODO
+		 * MessageBuilder
+		 * */
+		
 		String lines[] = fileUploaded.split("\\r?\\n");
 		
-		ArrayList<File> files = new ArrayList<File>();
 		
 		for(String fileN : lines) {
 			UrbanDataset ud = new UrbanDataset(fileN);

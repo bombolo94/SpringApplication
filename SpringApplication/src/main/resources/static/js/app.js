@@ -69,10 +69,15 @@ function loadFile(id) {
 	if(fileToLoad!=null){
 		if (document.getElementById(id).value.endsWith(".xml")) {
 			loadAsText(id,4,".json",fileToLoad);
+			return true;
 		} else if (document.getElementById(id).value.endsWith(".json")) {
 			loadAsText(id,5,".xml",fileToLoad);
+			return true;
 		}else if (document.getElementById(id).value.endsWith(".txt")) {
 			loadAsText(id,0,".txt",fileToLoad);
+			return true;
+		}else{
+			alert("Inserisci file corretto");
 		}
 		
 	}

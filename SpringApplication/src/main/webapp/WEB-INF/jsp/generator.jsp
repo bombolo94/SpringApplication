@@ -98,11 +98,16 @@
 				}
 			%>
 		</table>
-
+		<a href="./">Home</a>
 		<%
 			} else {
 		%>
-
+		<table>
+			<tr>
+					<td>Scegli file dei dadates<input type="file" id="fileDataset"></td>
+					<td><button onclick="return loadFileAsText('fileDataset')">Load..</button></td>
+				</tr>
+		</table>
 		<form action="templateGeneratorF" method="POST">
 			<table>
 				<tr>
@@ -116,11 +121,8 @@
 						</fieldset>
 					</td>
 				</tr>
-				<tr>
-					<td>Scegli file dei dadates<input type="file" id="fileDataset"></td>
-					<td><button onclick="return loadFileAsText('fileDataset')">Load..</button></td>
-				</tr>
-				<br><br>
+				
+				
 				<tr>
 					<td><textarea name=fileContent id="fileContent"
 							style="width: 512px; height: 256px"></textarea></td></tr>

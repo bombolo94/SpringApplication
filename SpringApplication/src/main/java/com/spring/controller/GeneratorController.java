@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -80,6 +81,7 @@ public class GeneratorController {
 		if (template.length > 1) {
 			ArrayList<File> fileTemplate = new ArrayList<File>();
 			for (String fileN : lines) {
+				
 				UrbanDataset ud = new UrbanDataset(fileN);
 				MessageBuilder mB = new MessageBuilder(ud);
 				SchematronBuilder sB = new SchematronBuilder(ud);
@@ -100,14 +102,14 @@ public class GeneratorController {
 			}
 		} else {
 			String templ = template[0];
-			
+
 			if (templ.equals("templateMessage")) {
 				ArrayList<File> fileMessage = new ArrayList<File>();
 				for (String fileN : lines) {
 					UrbanDataset ud = new UrbanDataset(fileN);
 					MessageBuilder mB = new MessageBuilder(ud);
-					File f = mB.buildF();
-					fileMessage.add(f);
+					File file = mB.buildF();
+					fileMessage.add(file);
 				}
 
 				try {
@@ -122,7 +124,7 @@ public class GeneratorController {
 
 			} else if (templ.equals("schematron")) {
 				ArrayList<File> fileSchematron = new ArrayList<File>();
-				
+
 				for (String fileN : lines) {
 					UrbanDataset ud = new UrbanDataset(fileN);
 					SchematronBuilder sB = new SchematronBuilder(ud);
@@ -131,7 +133,7 @@ public class GeneratorController {
 				}
 
 				try {
-					
+
 					byte[] zip = zipFilesfromFile(fileSchematron);
 					response.setContentType("application/zip");
 					response.setHeader("Content-Disposition", "attachment; filename=\"TemplateSchematron.ZIP\"");
@@ -145,25 +147,25 @@ public class GeneratorController {
 		}
 
 	}
-	
-	
+
+
 	private byte[] zipFilesfromFile(ArrayList<File> files) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(baos);
+		ZipOutputStream zos = new ZipOutputStream(baos, StandardCharsets.UTF_8);
+
 		byte bytes[] = new byte[2048];
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 
 		for (File fileName : files) {
-			UrbanDataset ud = new UrbanDataset(fileName.getName().substring(0, fileName.getName().length()-4));
-			String extension = fileName.getName().substring(fileName.getName().length()-4, fileName.getName().length());
-			
-			fis = new FileInputStream(ud.getName() + extension);
+			fis = new FileInputStream(fileName.getName());
 			bis = new BufferedInputStream(fis);
-			zos.putNextEntry(new ZipEntry(ud.getName() + extension));
+			zos.putNextEntry(new ZipEntry(fileName.getName()));
 
+			
 			int bytesRead;
 			while ((bytesRead = bis.read(bytes)) != -1) {
+				
 				zos.write(bytes, 0, bytesRead);
 			}
 			zos.closeEntry();
@@ -174,7 +176,7 @@ public class GeneratorController {
 		baos.flush();
 		zos.close();
 		baos.close();
-		
+
 		return baos.toByteArray();
 	}
 }

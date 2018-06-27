@@ -10,7 +10,7 @@
 <title>Generator</title>
 </head>
 <body>
-	<h1>Welcome in Generato File</h1>
+	<h1>Welcome in Generator File</h1>
 	<%
 		String input = (String) request.getAttribute("input");
 	%>
@@ -29,9 +29,7 @@
 
 				<td>
 
-					<form action="templateGeneratorU" method="POST">
-						Inserisci nome dataset: <input type="text" name="datasetName"
-							style="width: 352px">
+					<form id="templateGeneratorU" action="templateGeneratorU" method="POST">
 						<fieldset>
 							<legend>Template </legend>
 							<br> <input type="checkbox" name="template"
@@ -39,8 +37,16 @@
 								type="checkbox" name="template" value="schematron" /> Template
 							Schematron
 						</fieldset>
-						<input type="submit" value="Genera Template">
+						
 					</form>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Inserisci nome dataset: <input type="text" name="datasetName" style="width: 352px" form="templateGeneratorU">
+				</td>
+				<td>
+					<input type="submit" value="Genera Template" form="templateGeneratorU">
 				</td>
 			</tr>
 			<%
@@ -102,37 +108,42 @@
 		<%
 			} else {
 		%>
-		<table>
+		<!-- <table>
 			<tr>
-					<td>Scegli file dei dadates<input type="file" id="fileDataset"></td>
-					<td><button onclick="return loadFileAsText('fileDataset')">Load..</button></td>
-				</tr>
-		</table>
-		<form action="templateGeneratorF" method="POST">
+				<td>Scegli file dei dadates<input type="file" id="fileDataset"></td>
+				<td><button onclick="return loadFileAsText('fileDataset')">Load . . . </button></td>
+			</tr>
+		</table> -->
+		<form id="formGeneratorF" action="templateGeneratorF" method="POST">
 			<table>
 				<tr>
+					<td>Scegli file dei dadates<input type="file" id="fileDataset">
+					<button id="buttonLoad" onclick="return loadFileAsText('fileDataset')" type="button">Load</button></td>
+				</tr>
+				<tr>
 					<td>
-						<fieldset style="width: 320px">
-							<legend>Template</legend>
-							<br> <input type="checkbox" name="template"
-								value="templateMessage" /> Template Message <br /> <input
-								type="checkbox" name="template" value="schematron" /> Template
-							Schematron
-						</fieldset>
+						<div id="templateChoice">
+						
+						</div>
 					</td>
 				</tr>
-				
-				
 				<tr>
-					<td><textarea name=fileContent id="fileContent"
-							style="width: 512px; height: 256px"></textarea></td></tr>
-				<tr>
-					<td><input type="submit" value="Genera Template"></td>
+					<td>
+						<div id="generaT">
+						
+						</div>
+					</td>
 				</tr>
+
+				<!-- <tr>
+					<td><textarea name=fileContent id="fileContent"	style="width: 512px; height: 256px; visibility:hidden" ></textarea></td>
+				</tr>
+				<tr>
+					<td><button type="submit"> Genera Template </button></td>
+				</tr> -->
 			</table>
 		</form>
-		<br><br>
-		<a href="./">Home</a>
+		<br> <br> <a href="./">Home</a>
 	</div>
 	<%
 		}

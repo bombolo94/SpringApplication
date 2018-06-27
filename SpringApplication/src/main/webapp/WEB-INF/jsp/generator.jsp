@@ -108,39 +108,23 @@
 		<%
 			} else {
 		%>
-		<!-- <table>
-			<tr>
-				<td>Scegli file dei dadates<input type="file" id="fileDataset"></td>
-				<td><button onclick="return loadFileAsText('fileDataset')">Load . . . </button></td>
-			</tr>
-		</table> -->
 		<form id="formGeneratorF" action="templateGeneratorF" method="POST">
 			<table>
 				<tr>
 					<td>Scegli file dei dadates<input type="file" id="fileDataset">
-					<button id="buttonLoad" onclick="return loadFileAsText('fileDataset')" type="button">Load</button></td>
+					<button id="buttonLoad" onclick="return loadFile('fileDataset')" type="button">Load</button></td>
 				</tr>
 				<tr>
 					<td>
-						<div id="templateChoice">
-						
-						</div>
+						<div id="generaT"></div>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<div id="generaT">
+						<div id="templateChoice"></div>
 						
-						</div>
 					</td>
 				</tr>
-
-				<!-- <tr>
-					<td><textarea name=fileContent id="fileContent"	style="width: 512px; height: 256px; visibility:hidden" ></textarea></td>
-				</tr>
-				<tr>
-					<td><button type="submit"> Genera Template </button></td>
-				</tr> -->
 			</table>
 		</form>
 		<br> <br> <a href="./">Home</a>

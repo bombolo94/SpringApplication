@@ -18,7 +18,7 @@ function radioParsing() {
 			cont++;
 		}
 	}
-	
+
 	var parser = document.getElementsByName("parser");
 	cont = 0;
 	for (var i = 0, length = parser.length; i < length; i++) {
@@ -31,7 +31,7 @@ function radioParsing() {
 		alert("Radio must be checked");
 		return false;
 	} else {
-		 document.getElementById("formParser").submit();
+		document.getElementById("formParser").submit();
 		return true;
 	}
 }
@@ -44,36 +44,8 @@ function saveFile() {
 
 	} else {
 		var textToSave = document.getElementById("inputTextToSave").value;
-		var textToSaveAsBlob = new Blob([ textToSave]);
+		var textToSaveAsBlob = new Blob([ textToSave ]);
 		var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-		var downloadLink = document.createElement("a");
-		downloadLink.download = fileNameToSaveAs;
-		downloadLink.innerHTML = "Download File";
-		downloadLink.href = textToSaveAsURL;
-		downloadLink.onclick = destroyClickedElement;
-		downloadLink.style.display = "none";
-		document.body.appendChild(downloadLink);
-
-		downloadLink.click();
-		return true;
-	}
-
-}
-
-function saveTextAsFile(ext) {
-	var fileNameToSaveAs = document.getElementById("inputFileNameToSaveAs").value
-	if (fileNameToSaveAs == '') {
-		alert("Please Digit a name for the file");
-		return false;
-
-	} else {
-		fileNameToSaveAs = fileNameToSaveAs + ext;
-		var textToSave = document.getElementById("inputTextToSave").value;
-		var textToSaveAsBlob = new Blob([ textToSave, {
-			charset : "UTF-8"
-		} ]);
-		var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
-		alert(textToSaveAsBlob);
 		var downloadLink = document.createElement("a");
 		downloadLink.download = fileNameToSaveAs;
 		downloadLink.innerHTML = "Download File";
@@ -92,67 +64,74 @@ function destroyClickedElement(event) {
 	document.body.removeChild(event.target);
 }
 
-function loadFileAsText(id) {
+function loadFile(id) {
 	var fileToLoad = document.getElementById(id).files[0];
-	if (document.getElementById(id).value.endsWith(".xml")) {
-		var nFU = document.getElementById(id).value;
-		var p = nFU.substring(0, nFU.length - 4);
-		document.getElementById('inputFileName').value=p+".json";
-		var fileReader = new FileReader();
-		fileReader.onload = function(fileLoadedEvent) {
-			var textFromFileLoaded = fileLoadedEvent.target.result;
-			document.getElementById("fileContent").value = textFromFileLoaded;
-		};
-		fileReader.readAsText(fileToLoad, "UTF-8");
-		return true;
-	} else if (document.getElementById(id).value.endsWith(".json")) {
-		var nFU = document.getElementById(id).value;
-		var p = nFU.substring(0, nFU.length - 5);
-		document.getElementById('inputFileName').value=p+".xml";
-		var fileReader = new FileReader();
-		fileReader.onload = function(fileLoadedEvent) {
-			var textFromFileLoaded = fileLoadedEvent.target.result;
-			document.getElementById("fileContent").value = textFromFileLoaded;
-		};
-		fileReader.readAsText(fileToLoad, "UTF-8");
-		return true;
-	
+	if(fileToLoad!=null){
+		if (document.getElementById(id).value.endsWith(".xml")) {
+			loadAsText(id,4,".json",fileToLoad);
+		} else if (document.getElementById(id).value.endsWith(".json")) {
+			loadAsText(id,5,".xml",fileToLoad);
+		}else if (document.getElementById(id).value.endsWith(".txt")) {
+			loadAsText(id,0,".txt",fileToLoad);
+		}
+		
+	}
+}
 
-	}else if(ext=".txt"){
-		var fileReader = new FileReader();
-		
-		
-		fileReader.onload = function(fileLoadedEvent) {
-			
-						var textFromFileLoaded = fileLoadedEvent.target.result;
-			
-//						<fieldset style="width: 320px">
-//						<legend>Template</legend>
-//						<br> <input type="checkbox" name="template"
-//							value="templateMessage" /> Template Message <br /> <input
-//							type="checkbox" name="template" value="schematron" /> Template
-//						Schematron
-//					</fieldset>
+function loadAsText(id,n,ext, fileToLoad){
+	var nFU = document.getElementById(id).value;
+	var fileReader = new FileReader();
+	fileReader.onload = function(fileLoadedEvent) {
+
+		if(ext==".json" || ext==".xml"){
+			var textFromFileLoaded = fileLoadedEvent.target.result;
+			var p = nFU.substring(0, nFU.length - n);
+			var inputFileName = document.createElement('input');
+			inputFileName.name = "inputFileName";
+			inputFileName.value = p + ext;
+			inputFileName.setAttribute('form', 'formParser');
+			inputFileName.style.visibility = "hidden";
+
+			var input = document.createElement('textarea');
+			var oFormObject = document.getElementById("formParser");
+			input.name = 'fileContent';
+			input.cols = 80;
+			input.rows = 20;
+			input.id = 'fileContent';
+			input.setAttribute('form', 'formParser');
+			var button = document.createElement("button");
+			button.setAttribute('type', 'submit');
+			button.innerHTML = "Upload";
+			var oBody = document.getElementById("parserdiv");
+			input.value = textFromFileLoaded;
+			oBody.appendChild(inputFileName);
+			oBody.appendChild(input);
+			oBody.appendChild(button);
+			button.onclick = function() {
+				oFormObject.submit();
+			};
+		}else{
+			var textFromFileLoaded = fileLoadedEvent.target.result;
 			var fieldset = document.createElement('fieldset');
 			var legend = document.createElement('legend');
 			legend.innerHTML = "Template";
-			
+
 			var myDiv = document.getElementById("templateChoice");
 			var label = document.createElement("label");
-			label.innerHTML ="Template Message";
-			var checkbox = document.createElement("input"); 
+			label.innerHTML = "Template Message";
+			var checkbox = document.createElement("input");
 			checkbox.setAttribute("type", "checkbox");
 			checkbox.setAttribute("name", "template");
 			checkbox.setAttribute("value", "templateMessage");
-			
-			var checkbox1 = document.createElement("input"); 
+
+			var checkbox1 = document.createElement("input");
 			var label1 = document.createElement("label");
-			label1.innerHTML ="Template Schematron";
+			label1.innerHTML = "Template Schematron";
 			checkbox1.setAttribute("type", "checkbox");
 			checkbox1.setAttribute("name", "template");
 			checkbox1.setAttribute("value", "schematron");
 			checkbox1.innerHTML = "Template Schematron";
-			
+
 			checkbox.setAttribute('form', 'formGeneratorF');
 			checkbox1.setAttribute('form', 'formGeneratorF');
 			myDiv.appendChild(fieldset);
@@ -161,38 +140,35 @@ function loadFileAsText(id) {
 			fieldset.appendChild(checkbox);
 			fieldset.appendChild(label1);
 			fieldset.appendChild(checkbox1);
-			
-						
+			var button = document.createElement("button");
+			button.setAttribute('type', 'submit');
+			button.innerHTML = "Genera Template";
+			myDiv.appendChild(button);
+
+			button.onclick = function() {
+				oFormObject.submit();
+			};
+
 			var input = document.createElement('textarea');
 			var oFormObject = document.getElementById("formGeneratorF");
-		    input.name = 'fileContent';
-		    input.cols = 80;
-		    input.rows = 20;
-		    input.id = 'fileContent';
-		    input.setAttribute('form', 'formGeneratorF');
-		    var button = document.createElement("button");
-		    button.setAttribute('type', 'submit');
-		    button.innerHTML = "Genera Template";
-		    var oBody = document.getElementById("generaT");
+			input.name = 'fileContent';
+			input.cols = 80;
+			input.rows = 20;
+			input.id = 'fileContent';
+			input.setAttribute('form', 'formGeneratorF');
+			
+			var oBody = document.getElementById("generaT");
 			input.value = textFromFileLoaded;
 			oBody.appendChild(input);
-			oBody.appendChild(button);
-			oFormObject.append
-			
-			button.onclick = function(){
-		    	oFormObject.submit();
-	    	};
-		};
-		fileReader.readAsText(fileToLoad, "UTF-8");
-		return true;
-	} else {
-		alert('Please enter a valid name file.');						
-		return false;
-	}
-
+		}
+		
+	};
+	fileReader.readAsText(fileToLoad, "UTF-8");
+	
 }
 
-function inputForm(){
+
+function inputForm() {
 	var parser = document.getElementsByName("input");
 	cont = 0;
 	for (var i = 0, length = parser.length; i < length; i++) {
@@ -200,35 +176,16 @@ function inputForm(){
 			cont++;
 		}
 	}
-	
-	if(cont>0){
-		 document.getElementById("formInput").submit();
+
+	if (cont > 0) {
+		document.getElementById("formInput").submit();
 		return true;
-	}else{
-		
+	} else {
+
 		return false;
 	}
 }
-function ciao(t,name,content){
-	if(t<2){
-		if(t==0){
-			var zip = new JSZip();
-		}
-		zip.file(name, content);
-	}else{
-		zip.generateAsync({type:"blob"}).then(function (blob) {
-			saveAs(blob, "FileGenerated.zip");
-		 });
-	}
-	
-	
-}
 
-function zio(outContent){
-	alert("bella");
-	alert(outContent[0]);
-	
-}
 
 function create_zip() {
 	var fileToLoadS = document.getElementById("inputTextToSaveS").value
@@ -238,11 +195,11 @@ function create_zip() {
 	var zip = new JSZip();
 	zip.file(nameS, fileToLoadS);
 	zip.file(nameM, fileToLoadM);
-	
-	zip.generateAsync({type:"blob"}).then(function (blob) {
-        saveAs(blob, "FileGenerated.zip");
-	 });
-	
+
+	zip.generateAsync({
+		type : "blob"
+	}).then(function(blob) {
+		saveAs(blob, "FileGenerated.zip");
+	});
+
 }
-
-

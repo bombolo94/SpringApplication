@@ -43,13 +43,13 @@ public class FileUploadController
   }
   
   @RequestMapping(value={"/uploadFile"}, method={RequestMethod.POST})
-  public ModelAndView uploadFileXML(@RequestParam("fileContent") String fileUploaded, @RequestParam("extension") String extension, @RequestParam("inputFileName") String inputFileName) {
+  public ModelAndView uploadFileXML(@RequestParam("fileContent") String fileUploaded, @RequestParam("inputFileName") String inputFileName) {
     ModelAndView modelAndView = new ModelAndView("confirmation");
     String stringFile = null;
     String fileToSaveName = null;
     try
     {
-    	if(extension.equals(".json")) {
+    	if(inputFileName.endsWith(".json")) {
     		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     	      DocumentBuilder db = dbf.newDocumentBuilder();
     	      InputStream is = new ByteArrayInputStream(fileUploaded.getBytes("UTF-8"));
